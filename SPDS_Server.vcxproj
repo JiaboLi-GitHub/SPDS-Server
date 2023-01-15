@@ -32,7 +32,7 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>Qt5.12.9</QtInstall>
-    <QtModules>core;network;gui</QtModules>
+    <QtModules>core;sql;network;gui</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
@@ -104,6 +104,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CommonData.cpp" />
     <ClCompile Include="Email.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainStart.cpp" />
@@ -115,10 +116,14 @@
   <ItemGroup>
     <QtMoc Include="MainStart.h" />
     <QtMoc Include="Email.h" />
+    <ClInclude Include="CommonData.h" />
     <ClInclude Include="MessageJson.h" />
     <ClInclude Include="TcpData.h" />
     <ClInclude Include="TcpSocket.h" />
     <QtMoc Include="TcpServer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="Resource.qrc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

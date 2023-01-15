@@ -53,6 +53,9 @@
     <ClCompile Include="Email.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CommonData.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MessageJson.h">
@@ -63,6 +66,9 @@
     </ClInclude>
     <ClInclude Include="TcpSocket.h">
       <Filter>Tcp Server</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonData.h">
+      <Filter>Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -75,5 +81,10 @@
     <QtMoc Include="Email.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="Resource.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
   </ItemGroup>
 </Project>
