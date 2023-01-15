@@ -34,14 +34,12 @@ bool Email::connect()
     if (smtp->connectToHost())
     {
         if (smtp->login())
+        {
             return true;
-        else
-            false;
+        }
     }
-    else
-    {
-        return true;
-    }
+    return false;
+    
 
 }
 
@@ -64,11 +62,11 @@ bool Email::sendMail(QString toMailAddress,QString code)
 您好！\n\
 您正在进行SPDS坐姿监测系统注册，\n\
 您的邮箱验证码是：[code]（5分钟内有效），\
-请及时输入验证码进行验证。\n\n\n\
+请及时输入验证码进行验证。\n\n\
 广东东软学院SPDS项目团队\n\
 [DateTime]\n");
     textStr.replace("[code]", code);
-    textStr.replace("[DateTime]", QDateTime::currentDateTime().toString());
+    textStr.replace("[DateTime]", QDateTime::currentDateTime().toString(toUTF8("yyyy年MM月dd日 hh:mm")));
 
     MimeText text;
     text.setText(textStr);

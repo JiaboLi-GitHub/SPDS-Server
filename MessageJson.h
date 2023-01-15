@@ -6,8 +6,7 @@
 class MessageJson
 {
 public:
-	static TcpData::RequestType requestType(QByteArray byteArray);
-
-	static QString getMailAddress(QByteArray byteArray);
+	static TcpData::RequestType getRequestType(QByteArray &byteArray);	
+	static QMap<QString, QString> getRequestData(QByteArray& byteArray,QStringList &keyList);
 };
 

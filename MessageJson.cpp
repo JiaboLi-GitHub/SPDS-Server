@@ -4,24 +4,30 @@
 #include<qjsonarray.h>
 #include<qjsonobject.h>
 #include<qjsonvalue.h>
-
-
+#include<qmap.h>
+#include<qstringlist.h>
 
 //返回请求类型
-TcpData::RequestType MessageJson::requestType(QByteArray byteArray)
+TcpData::RequestType MessageJson::getRequestType(QByteArray& byteArray)
 {
 	QJsonDocument document = QJsonDocument::fromBinaryData(byteArray);
-	QJsonObject resource_json = document.object();
-	int typeId = resource_json["RequestType"].toInt();
+	QJsonObject request_json = document.object();
+	int typeId = request_json["RequestType"].toInt();
 	TcpData::RequestType type = (TcpData::RequestType)typeId;
 	return type;
 }
 
-QString MessageJson::getMailAddress(QByteArray byteArray)
+
+QMap<QString, QString> MessageJson::getRequestData(QByteArray& byteArray, QStringList &keyList)
 {
 	QJsonDocument document = QJsonDocument::fromBinaryData(byteArray);
-	QJsonObject resource_json = document.object();
-	QJsonObject data_json = document["data"].toObject();
-	QString mailAddress = data_json["mailAddress"].toString();
-	return mailAddress;
+	QJsonObject request_json = document.object();
+	QJsonObject data_json = request_json["data"].toObject();
+
+	QMap<QString, QString> enrollData;
+	for (auto& key : keyList)
+	{
+		enrollData[key] = data_json[key].toString();
+	}
+	return enrollData;
 }
