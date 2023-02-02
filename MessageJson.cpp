@@ -23,10 +23,10 @@ QMap<QString, QString> MessageJson::getRequestData(QByteArray& byteArray, QStrin
 	QJsonObject request_json = document.object();
 	QJsonObject data_json = request_json["data"].toObject();
 
-	QMap<QString, QString> enrollData;
+	QMap<QString, QString> data;
 	for (auto& key : keyList)
 	{
-		enrollData[key] = data_json[key].toString();
+		data[key] = data_json[key].toString();
 	}
-	return enrollData;
+	return data;
 }
