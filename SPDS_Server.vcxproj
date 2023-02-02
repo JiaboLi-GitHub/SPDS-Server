@@ -107,14 +107,12 @@
     <ClCompile Include="CommonData.cpp" />
     <ClCompile Include="Email.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MainStart.cpp" />
     <ClCompile Include="MessageJson.cpp" />
     <ClCompile Include="TcpData.cpp" />
     <ClCompile Include="TcpServer.cpp" />
     <ClCompile Include="TcpSocket.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="MainStart.h" />
     <QtMoc Include="Email.h" />
     <ClInclude Include="CommonData.h" />
     <ClInclude Include="MessageJson.h" />

@@ -18,6 +18,5 @@ protected:
 private:
     QMap<qintptr, TcpSocket*> tcpSockeMap;
 
-
 };
 

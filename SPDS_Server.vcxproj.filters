@@ -47,9 +47,6 @@
     <ClCompile Include="TcpSocket.cpp">
       <Filter>Tcp Server</Filter>
     </ClCompile>
-    <ClCompile Include="MainStart.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Email.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -74,9 +71,6 @@
   <ItemGroup>
     <QtMoc Include="TcpServer.h">
       <Filter>Tcp Server</Filter>
-    </QtMoc>
-    <QtMoc Include="MainStart.h">
-      <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Email.h">
       <Filter>Header Files</Filter>

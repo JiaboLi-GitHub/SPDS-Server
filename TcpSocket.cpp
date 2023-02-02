@@ -9,6 +9,7 @@
 #include"MessageJson.h"
 #include"Email.h"
 #include"CommonData.h"
+
 #include<qdebug.h>
 #include<qhostaddress.h>
 
@@ -40,17 +41,17 @@ void TcpSocket::run()
 void TcpSocket::read()
 {
 	QByteArray byteArray = tcpSocket->readAll();
-	TcpData::RequestType type = MessageJson::getRequestType(byteArray);
-	if (type == TcpData::RequestType::VerificationCode)
+	RequestType type = MessageJson::getRequestType(byteArray);
+	if (type.m_val == RequestType::VerificationCode)
 	{
 		verificationCode(byteArray);
 	}
-	switch (type)
+	switch (type.m_val)
 	{
-	case TcpData::VerificationCode:
+	case RequestType::VerificationCode:
 		verificationCode(byteArray);
 		break;
-	case TcpData::Enroll:
+	case RequestType::Enroll:
 		
 	default:
 		break;

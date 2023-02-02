@@ -8,15 +8,14 @@
 #include<qstringlist.h>
 
 //返回请求类型
-TcpData::RequestType MessageJson::getRequestType(QByteArray& byteArray)
+RequestType MessageJson::getRequestType(QByteArray& byteArray)
 {
 	QJsonDocument document = QJsonDocument::fromBinaryData(byteArray);
 	QJsonObject request_json = document.object();
 	int typeId = request_json["RequestType"].toInt();
-	TcpData::RequestType type = (TcpData::RequestType)typeId;
+	RequestType type = RequestType(typeId);
 	return type;
 }
-
 
 QMap<QString, QString> MessageJson::getRequestData(QByteArray& byteArray, QStringList &keyList)
 {

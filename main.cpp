@@ -9,7 +9,6 @@
 #include <iostream>
 
 #include"TcpServer.h"
-#include"MainStart.h"
 #include"Email.h"
 
 /*************************************************

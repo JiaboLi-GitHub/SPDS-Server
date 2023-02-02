@@ -11,4 +11,3 @@ public:
 	static QMutex sqlUser_mutex;	//ËøÊı¾İ¿âuser±í
 
 };
-
