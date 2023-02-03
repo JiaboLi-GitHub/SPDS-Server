@@ -42,10 +42,7 @@ void TcpSocket::read()
 {
 	QByteArray byteArray = tcpSocket->readAll();
 	TcpData::RequestType type = MessageJson::getRequestType(byteArray);
-	if (type == TcpData::RequestType::VerificationCode)
-	{
-		verificationCode(byteArray);
-	}
+
 	switch (type)
 	{
 	case TcpData::RequestType::VerificationCode:
@@ -87,15 +84,6 @@ Description: 处理客户端发起的获取验证码请求
 	  Input: byteArray=客户端发来的数据
 	 Return: 空
 *************************************************/
-/*
-//注册响应类型
-	enum Enroll_Response
-	{
-		Enroll_Correct,		//注册成功
-		Code_Error,			//验证码错误
-		Exist_Error,		//账号已注册
-		Enroll_error		//未知错误
-	};*/
 void TcpSocket::enroll(QByteArray& byteArray)
 {
 	//获取请求注册数据
