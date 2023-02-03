@@ -63,13 +63,13 @@ int main(int argc, char *argv[])
         std::cout << "数据库连接失败!" << std::endl;;
     }
 
-    QString query = "SELECT * from user where mailAddress = [mailAddress]";
-    query.replace("[mailAddress]", "'1955474265@qq.com'");
-    qDebug() << query;
-    QSqlQuery sqlQuery;
-    sqlQuery.exec(query);
-    qDebug() << sqlQuery.next();
-    qDebug() << sqlQuery.value("userName").toString();
+    //QString query = "SELECT * from user where mailAddress = [mailAddress]";
+   // query.replace("[mailAddress]", "'1955474265@qq.com'");
+   // qDebug() << query;
+   // QSqlQuery sqlQuery;
+   // sqlQuery.exec(query);
+   // qDebug() << sqlQuery.next();
+   // qDebug() << sqlQuery.value("userName").toString();
     
     TcpServer *tcpServer=new TcpServer(new QObject(),8888);
     

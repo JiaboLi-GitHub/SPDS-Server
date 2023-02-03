@@ -82,6 +82,20 @@ void TcpSocket::verificationCode(QByteArray &byteArray)
 	}
 }
 
+/*************************************************
+Description: 处理客户端发起的获取验证码请求
+	  Input: byteArray=客户端发来的数据
+	 Return: 空
+*************************************************/
+/*
+//注册响应类型
+	enum Enroll_Response
+	{
+		Enroll_Correct,		//注册成功
+		Code_Error,			//验证码错误
+		Exist_Error,		//账号已注册
+		Enroll_error		//未知错误
+	};*/
 void TcpSocket::enroll(QByteArray& byteArray)
 {
 	//获取请求注册数据
@@ -91,10 +105,15 @@ void TcpSocket::enroll(QByteArray& byteArray)
 	QString    password_tmp =  requestData["password"];
 	QString        code_tmp =  requestData["code"];
 
-	//判断验证码是否正确
+	QMap<QString, QString> data;
+	QString responseTypeStr = "Enroll_Request";
+	data.insert(responseTypeStr, QString::number(TcpData::Enroll_Correct));
+
+	//对比验证码
 	if (code_tmp != code)
 	{
-		//不正确
+		data[responseTypeStr] = QString::number(TcpData::Code_Error);
+		
 	}
 
 	//锁住SQL中user表
@@ -107,7 +126,8 @@ void TcpSocket::enroll(QByteArray& byteArray)
 	sqlQuery.exec(query);
 	if (sqlQuery.next())
 	{
-		//已经注册
+		data[responseTypeStr] = QString::number(TcpData::Exist_Error);
+		
 	}
 
 
@@ -138,4 +158,9 @@ void TcpSocket::enroll(QByteArray& byteArray)
 	}
 
 	//响应
+
+	{
+		QByteArray byteArray = MessageJson::getResponseByteArray(TcpData::Enroll_Response, data);
+	}
+
 }

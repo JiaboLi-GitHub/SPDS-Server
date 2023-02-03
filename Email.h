@@ -17,7 +17,7 @@ private:
   //  const static QString mailAddress;
   //  const static QString mailpassword;
     QString mailAddress  = "1955474265@qq.com";
-    QString mailpassword = "imlmdfwwykupfbia";
+    QString mailpassword = "xjsvouqvrvblebic";
 
 private:
     SmtpClient* smtp=NULL;
