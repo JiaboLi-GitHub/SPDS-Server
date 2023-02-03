@@ -31,7 +31,7 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>Qt5.12.9</QtInstall>
+    <QtInstall>5.12.9_msvc2017_64</QtInstall>
     <QtModules>core;sql;network;gui</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
