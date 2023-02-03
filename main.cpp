@@ -10,6 +10,7 @@
 
 #include"TcpServer.h"
 #include"Email.h"
+#include"MessageJson.h"
 
 /*************************************************
 Description: ¶ÁÈ¡MYSQLÅäÖÃÎÄ¼ş
@@ -71,6 +72,6 @@ int main(int argc, char *argv[])
     qDebug() << sqlQuery.value("userName").toString();
     
     TcpServer *tcpServer=new TcpServer(new QObject(),8888);
-    MainStart* mainStart = new MainStart();
+    
     return a.exec();
 }

@@ -7,7 +7,14 @@
 class MessageJson
 {
 public:
-	static RequestType getRequestType(QByteArray &byteArray);	
-	static QMap<QString, QString> getRequestData(QByteArray& byteArray,QStringList &keyList);
+	static TcpData::RequestType getRequestType(QByteArray &byteArray);
+	static QMap<QString, QString> getRequestData(QByteArray& byteArray);
+
+private:
+	static QStringList getRequestStr(TcpData::RequestType type);
+
+private:
+	static const QStringList Enroll_Request_Str;
+	static const QStringList Login_Request_Str;
 };
 

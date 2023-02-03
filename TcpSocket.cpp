@@ -41,17 +41,17 @@ void TcpSocket::run()
 void TcpSocket::read()
 {
 	QByteArray byteArray = tcpSocket->readAll();
-	RequestType type = MessageJson::getRequestType(byteArray);
-	if (type.m_val == RequestType::VerificationCode)
+	TcpData::RequestType type = MessageJson::getRequestType(byteArray);
+	if (type == TcpData::RequestType::VerificationCode)
 	{
 		verificationCode(byteArray);
 	}
-	switch (type.m_val)
+	switch (type)
 	{
-	case RequestType::VerificationCode:
+	case TcpData::RequestType::VerificationCode:
 		verificationCode(byteArray);
 		break;
-	case RequestType::Enroll:
+	case TcpData::RequestType::Enroll:
 		
 	default:
 		break;
@@ -66,9 +66,7 @@ Description: 处理客户端发起的获取验证码请求
 void TcpSocket::verificationCode(QByteArray &byteArray)
 {
 	//获取邮箱号
-	QStringList keyList;
-	keyList << "mailAddress";
-	QMap<QString,QString> requestData= MessageJson::getRequestData(byteArray,keyList);
+	QMap<QString,QString> requestData= MessageJson::getRequestData(byteArray);
 	QString mailAddress_tmp = requestData["mailAddress"];
 
 	Email email;
@@ -87,9 +85,9 @@ void TcpSocket::verificationCode(QByteArray &byteArray)
 void TcpSocket::enroll(QByteArray& byteArray)
 {
 	//获取请求注册数据
-	QStringList keyList;
-	keyList << "userName" << "mailAddress" << "password" << "code";
-	QMap<QString, QString> requestData = MessageJson::getRequestData(byteArray, keyList);
+	QMap<QString, QString> requestData = MessageJson::getRequestData(byteArray);
+
+
 	QString    userName_tmp =  requestData["userName"];
 	QString mailAddress_tmp =  requestData["mailAddress"];
 	QString    password_tmp =  requestData["password"];
