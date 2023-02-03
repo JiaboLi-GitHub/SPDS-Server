@@ -9,15 +9,16 @@ public:
 	enum RequestType
 	{
 		VerificationCode,	//请求发送验证码
-		Enroll,				//注册
-		LogIn				//登录	
+		Enroll_Request,		//注册请求
+		LogIn_Request		//登录请求
 	};
 
 	enum ResponseType
 	{
-		//	Enroll,
-		//	LogIn
+		Enroll_Response,		//注册结果响应
+		LogIn_Response		//登录结果响应
 	};
+
 
 	enum Enroll_Response
 	{

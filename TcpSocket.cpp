@@ -51,7 +51,7 @@ void TcpSocket::read()
 	case TcpData::RequestType::VerificationCode:
 		verificationCode(byteArray);
 		break;
-	case TcpData::RequestType::Enroll:
+	case TcpData::RequestType::Enroll_Request:
 		
 	default:
 		break;
@@ -86,8 +86,6 @@ void TcpSocket::enroll(QByteArray& byteArray)
 {
 	//获取请求注册数据
 	QMap<QString, QString> requestData = MessageJson::getRequestData(byteArray);
-
-
 	QString    userName_tmp =  requestData["userName"];
 	QString mailAddress_tmp =  requestData["mailAddress"];
 	QString    password_tmp =  requestData["password"];

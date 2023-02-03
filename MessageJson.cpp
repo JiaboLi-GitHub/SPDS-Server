@@ -61,8 +61,8 @@ QStringList MessageJson::getRequestStr(TcpData::RequestType type)
 	QStringList requestStr;
 	switch (type)
 	{
-	case TcpData::Enroll	:	requestStr = Enroll_Request_Str;
-	case TcpData::LogIn	:	requestStr = Login_Request_Str;
+	case TcpData::Enroll_Request:	requestStr = Enroll_Request_Str;
+	case TcpData::LogIn_Request:	requestStr = Login_Request_Str;
 	default:
 		break;
 	}
