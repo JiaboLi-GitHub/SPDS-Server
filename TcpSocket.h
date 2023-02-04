@@ -2,6 +2,7 @@
 #include<qthread.h>
 #include<qtcpsocket.h>
 #include<qbytearray.h>
+#include<qdatetime.h>
 #include"CommonData.h"
 #include"TcpData.h"
 
@@ -39,6 +40,7 @@ private:
     QString mailAddress;    //邮箱号
     QString password;       //密码
     QString code;           //验证码
+    QDateTime code_DateTme; //验证码生成时间
 
 };
 

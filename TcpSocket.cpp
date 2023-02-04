@@ -89,6 +89,7 @@ void TcpSocket::verificationCode(QByteArray &byteArray)
 	Email email;
 	if (email.connect())
 	{
+		code_DateTme = QDateTime::currentDateTime();
 		int number = QRandomGenerator::global()->bounded(1000, 9999);
 		QString code_tmp = QString::number(number);
 		if (email.sendMail(mailAddress_tmp, code_tmp))
@@ -114,11 +115,11 @@ void TcpSocket::enroll(QByteArray& byteArray)
 	QString        code_tmp =  requestData["code"];
 
 	QMap<QString, QString> data;
-	QString responseTypeStr = "Enroll_Request";
+	QString responseTypeStr = "Enroll_Response";
 	data.insert(responseTypeStr, QString::number(TcpData::Enroll_Correct));
 
 	//对比验证码
-	if (code_tmp != code)
+	if (code_tmp != code && QDateTime::currentDateTime()<=code_DateTme.addSecs(300))
 	{
 		data[responseTypeStr] = QString::number(TcpData::Code_Error);
 		response(TcpData::Enroll_Response, data);
@@ -133,7 +134,7 @@ void TcpSocket::enroll(QByteArray& byteArray)
 	query.replace("[mailAddress]", mailAddress_tmp);
 	QSqlQuery sqlQuery;
 	sqlQuery.exec(query);
-	if (!sqlQuery.next())
+	if (sqlQuery.next())
 	{
 		data[responseTypeStr] = QString::number(TcpData::Exist_Error);
 		response(TcpData::Enroll_Response,data);
@@ -190,7 +191,44 @@ void TcpSocket::logIn(QByteArray& byteArray)
 	QMap<QString, QString> requestData = MessageJson::getRequestData(byteArray);
 	QString mailAddress_tmp = requestData["mailAddress"];
 	QString    password_tmp = requestData["password"];
+	QMap<QString, QString> data;
+	QString responseTypeStr = "LogIn_Response";
+	data.insert(responseTypeStr, QString::number(TcpData::Login_Correct));
 
+	//锁住SQL中user表
+	QMutexLocker locker(&CommonData::sqlUser_mutex);
 
 	//账号不存在
+	QString query = "select * from user where mailAddress = '[mailAddress]'";
+	query.replace("[mailAddress]", mailAddress_tmp);
+	QSqlQuery sqlQuery;
+	sqlQuery.exec(query);
+	bool res = sqlQuery.next();
+	if (!res)
+	{
+		data[responseTypeStr] = TcpData::Account_Error;
+		response(TcpData::LogIn_Response,data);
+		return;
+	}
+
+	QString    userName_sql = sqlQuery.value("userName").toString();
+	QString mailAddress_sql = sqlQuery.value("mailAddress").toString();
+	QString    password_sql = sqlQuery.value("password").toString();
+	//密码错误
+	if (password_sql != password_tmp)
+	{
+		data[responseTypeStr] = TcpData::Password_Error;
+		response(TcpData::LogIn_Response, data);
+		return;
+	}
+
+	//登录成功
+	userName = userName_sql;
+	mailAddress = mailAddress_sql;
+	password = password_sql;
+	data[responseTypeStr] = TcpData::Login_Correct;
+	data.insert("userName", userName);
+	data.insert("mailAddress", mailAddress);
+	response(TcpData::LogIn_Response, data);
+	return;
 }
