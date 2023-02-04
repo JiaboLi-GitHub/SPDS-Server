@@ -51,6 +51,9 @@ void TcpSocket::read()
 	case TcpData::RequestType::Enroll_Request:
 		enroll(byteArray);
 		break;
+	case TcpData::LogIn_Request:
+		logIn(byteArray);
+		break;
 	default:
 		break;
 	}
@@ -183,5 +186,11 @@ Description: 处理客户端发起的登录请求
 *************************************************/
 void TcpSocket::logIn(QByteArray& byteArray)
 {
+	//获取请求登录数据
+	QMap<QString, QString> requestData = MessageJson::getRequestData(byteArray);
+	QString mailAddress_tmp = requestData["mailAddress"];
+	QString    password_tmp = requestData["password"];
 
+
+	//账号不存在
 }

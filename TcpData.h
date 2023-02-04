@@ -34,8 +34,9 @@ public:
 	enum Login_Response
 	{
 		Login_Correct,		//µÇÂ¼³É¹¦
-		Account_Error,		//ÕËºÅ´íÎó
-		Login_error			//Î´Öª´íÎó
+		Account_Error,		//ÕËºÅ´íÎó£¨ÕËºÅ²»´æÔÚ£©
+		Password_Error,		//ÃÜÂë´íÎó
+		Login_Error			//Î´Öª´íÎó
 	};
 };
 
