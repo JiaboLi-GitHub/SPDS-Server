@@ -21,6 +21,7 @@ private:
     void response(TcpData::ResponseType type, QMap<QString, QString>& data);
     void verificationCode(QByteArray& byteArray);
     void enroll(QByteArray& byteArray);
+    void logIn(QByteArray& byteArray);
 
 protected:
     void run();

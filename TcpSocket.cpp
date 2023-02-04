@@ -62,6 +62,17 @@ void TcpSocket::write(QByteArray& byteArray)
 }
 
 /*************************************************
+Description: 将响应数据序列化并发出通讯请求
+	  Input: type=响应类型 data=响应数据
+	 Return: 空
+*************************************************/
+void TcpSocket::response(TcpData::ResponseType type, QMap<QString, QString>& data)
+{
+	QByteArray byteArray = MessageJson::getResponseByteArray(type, data);
+	write(byteArray);
+}
+
+/*************************************************
 Description: 处理客户端发起的获取验证码请求
 	  Input: byteArray=客户端发来的数据
 	 Return: 空
@@ -86,7 +97,7 @@ void TcpSocket::verificationCode(QByteArray &byteArray)
 }
 
 /*************************************************
-Description: 处理客户端发起的获取验证码请求
+Description: 处理客户端发起的注册请求
 	  Input: byteArray=客户端发来的数据
 	 Return: 空
 *************************************************/
@@ -163,15 +174,14 @@ void TcpSocket::enroll(QByteArray& byteArray)
 	//注册成功
 	data[responseTypeStr] = QString::number(TcpData::Enroll_Correct);
 	response(TcpData::Enroll_Response, data);
-}
+}//差新建几张数据库的表
 
 /*************************************************
-Description: 将响应数据序列化并发出通讯请求
-	  Input: type=响应类型 data=响应数据
+Description: 处理客户端发起的登录请求
+	  Input: byteArray=客户端发来的数据
 	 Return: 空
 *************************************************/
-void TcpSocket::response(TcpData::ResponseType type, QMap<QString, QString>& data)
+void TcpSocket::logIn(QByteArray& byteArray)
 {
-	QByteArray byteArray = MessageJson::getResponseByteArray(type, data);
-	write(byteArray);
+
 }
