@@ -127,7 +127,7 @@ void TcpSocket::enroll(QByteArray& byteArray)
 	}
 
 	//锁住SQL中user表
-	QMutexLocker locker(&CommonData::sqlUser_mutex);
+	QMutexLocker locker(&CommonData::sqlUser_Mutex);
 
 	//片段账号是否已经注册
 	QString query = "select * from user where mailAddress = '[mailAddress]'";
@@ -196,7 +196,7 @@ void TcpSocket::logIn(QByteArray& byteArray)
 	data.insert(responseTypeStr, QString::number(TcpData::Login_Correct));
 
 	//锁住SQL中user表
-	QMutexLocker locker(&CommonData::sqlUser_mutex);
+	QMutexLocker sqlUser_Locker(&CommonData::sqlUser_Mutex);
 
 	//账号不存在
 	QString query = "select * from user where mailAddress = '[mailAddress]'";
@@ -221,6 +221,16 @@ void TcpSocket::logIn(QByteArray& byteArray)
 		response(TcpData::LogIn_Response, data);
 		return;
 	}
+
+	//已在线
+	QMutexLocker existMap_Locker(&CommonData::existMap_Mutex);
+	if (CommonData::existMap[mailAddress_tmp])
+	{
+		data[responseTypeStr] = TcpData::Login_Error;
+		response(TcpData::LogIn_Response, data);
+		return;
+	}
+	CommonData::existMap[mailAddress_tmp] = true;
 
 	//登录成功
 	userName = userName_sql;
