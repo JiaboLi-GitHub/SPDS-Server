@@ -1,7 +1,9 @@
 #pragma once
 #include<qthread.h>
 #include<qtcpsocket.h>
+#include<qbytearray.h>
 #include"CommonData.h"
+#include"TcpData.h"
 
 extern QMutex sqlUser_mutex;
 
@@ -15,8 +17,10 @@ public:
 
 private:
     void read();
+    void write(QByteArray& byteArray);
+    void response(TcpData::ResponseType type, QMap<QString, QString>& data);
     void verificationCode(QByteArray& byteArray);
-    void TcpSocket::enroll(QByteArray& byteArray);
+    void enroll(QByteArray& byteArray);
 
 protected:
     void run();

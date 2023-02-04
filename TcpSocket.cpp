@@ -49,10 +49,16 @@ void TcpSocket::read()
 		verificationCode(byteArray);
 		break;
 	case TcpData::RequestType::Enroll_Request:
-		
+		enroll(byteArray);
+		break;
 	default:
 		break;
 	}
+}
+
+void TcpSocket::write(QByteArray& byteArray)
+{
+	tcpSocket->write(byteArray);
 }
 
 /*************************************************
@@ -101,7 +107,8 @@ void TcpSocket::enroll(QByteArray& byteArray)
 	if (code_tmp != code)
 	{
 		data[responseTypeStr] = QString::number(TcpData::Code_Error);
-		
+		response(TcpData::Enroll_Response, data);
+		return;
 	}
 
 	//锁住SQL中user表
@@ -112,10 +119,11 @@ void TcpSocket::enroll(QByteArray& byteArray)
 	query.replace("[mailAddress]", mailAddress_tmp);
 	QSqlQuery sqlQuery;
 	sqlQuery.exec(query);
-	if (sqlQuery.next())
+	if (!sqlQuery.next())
 	{
 		data[responseTypeStr] = QString::number(TcpData::Exist_Error);
-		
+		response(TcpData::Enroll_Response,data);
+		return;
 	}
 
 
@@ -129,9 +137,9 @@ void TcpSocket::enroll(QByteArray& byteArray)
 										  '[endDateTime]',\
 										  '[ip]')";
 
-		QDateTime dateTime;
-		requestData["dateTime"] = dateTime.toString();
-		requestData["endDateTime"] = dateTime.toString();
+		QDateTime dateTime= QDateTime::currentDateTime();
+		requestData["dateTime"] = dateTime.toString("yyyy-MM-dd hh:mm:ss");
+		requestData["endDateTime"] = dateTime.toString("yyyy-MM-dd hh:mm:ss");
 		requestData["ip"] = this->ipv4_str;
 
 		auto iterator = requestData.constBegin();
@@ -140,15 +148,30 @@ void TcpSocket::enroll(QByteArray& byteArray)
 			QString  key  = "[" + iterator.key() + "]";
 			QString value = iterator.value();
 			query.replace(key, value);
+			iterator++;
 		}
 
-		sqlQuery.exec(query);
+		bool res = sqlQuery.exec(query);
+		if (!res)//未知错误
+		{
+			data[responseTypeStr] = QString::number(TcpData::Enroll_error);
+			response(TcpData::Enroll_Response, data);
+			return;
+		}
 	}
 
-	//响应
+	//注册成功
+	data[responseTypeStr] = QString::number(TcpData::Enroll_Correct);
+	response(TcpData::Enroll_Response, data);
+}
 
-	{
-		QByteArray byteArray = MessageJson::getResponseByteArray(TcpData::Enroll_Response, data);
-	}
-
+/*************************************************
+Description: 将响应数据序列化并发出通讯请求
+	  Input: type=响应类型 data=响应数据
+	 Return: 空
+*************************************************/
+void TcpSocket::response(TcpData::ResponseType type, QMap<QString, QString>& data)
+{
+	QByteArray byteArray = MessageJson::getResponseByteArray(type, data);
+	write(byteArray);
 }
