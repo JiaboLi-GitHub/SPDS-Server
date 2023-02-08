@@ -2,7 +2,7 @@
 
 TcpData::TcpData()
 {
-
+	
 }
 TcpData::~TcpData()
 {

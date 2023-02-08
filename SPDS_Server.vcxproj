@@ -118,7 +118,7 @@
     <ClInclude Include="CommonData.h" />
     <ClInclude Include="MessageJson.h" />
     <ClInclude Include="TcpData.h" />
-    <ClInclude Include="TcpSocket.h" />
+    <QtMoc Include="TcpSocket.h" />
     <QtMoc Include="TcpServer.h" />
   </ItemGroup>
   <ItemGroup>

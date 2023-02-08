@@ -61,9 +61,6 @@
     <ClInclude Include="TcpData.h">
       <Filter>Data</Filter>
     </ClInclude>
-    <ClInclude Include="TcpSocket.h">
-      <Filter>Tcp Server</Filter>
-    </ClInclude>
     <ClInclude Include="CommonData.h">
       <Filter>Data</Filter>
     </ClInclude>
@@ -74,6 +71,9 @@
     </QtMoc>
     <QtMoc Include="Email.h">
       <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="TcpSocket.h">
+      <Filter>Tcp Server</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>

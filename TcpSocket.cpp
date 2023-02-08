@@ -15,32 +15,27 @@
 
 
 
-TcpSocket::TcpSocket(qintptr id, QObject* parent):
-	socketDescriptor(id), QThread(parent)
+TcpSocket::TcpSocket(qintptr id)
 {
-	tcpSocket = new QTcpSocket();
-	tcpSocket->setSocketDescriptor(id);
+	setSocketDescriptor(id);
 
 	//获取用户IP地址
-	this->ipv4_int32 = tcpSocket->peerAddress().toIPv4Address();
+	this->ipv4_int32 = peerAddress().toIPv4Address();
 	this->ipv4_str = QHostAddress(ipv4_int32).toString();
-	
-	connect(tcpSocket, &QTcpSocket::readyRead, this, &TcpSocket::read);
+
+	connect(this, &QTcpSocket::readyRead, this, &TcpSocket::read);
+	connect(this, &QTcpSocket::disconnected, this, &TcpSocket::disconnect);
 }
 
 TcpSocket::~TcpSocket()
 {
-	tcpSocket->deleteLater();
-}
-
-void TcpSocket::run()
-{
-	exec();
+	qDebug() << u8"释放";
+	qDebug() << u8"释放::线程：" << QThread::currentThreadId();
 }
 
 void TcpSocket::read()
 {
-	QByteArray byteArray = tcpSocket->readAll();
+	QByteArray byteArray = readAll();
 	TcpData::RequestType type = MessageJson::getRequestType(byteArray);
 
 	switch (type)
@@ -57,11 +52,21 @@ void TcpSocket::read()
 	default:
 		break;
 	}
+
+	qDebug() << u8"TcpSocket::read线程：" << QThread::currentThreadId();
 }
 
 void TcpSocket::write(QByteArray& byteArray)
 {
-	tcpSocket->write(byteArray);
+	qDebug() << u8"TcpSocket::write线程：" << QThread::currentThreadId();
+	write(byteArray);
+}
+
+
+void TcpSocket::disconnect()
+{
+	qDebug() << u8"TcpSocket disconnect线程：" << QThread::currentThreadId();
+	emit disconnected(socketDescriptor());
 }
 
 /*************************************************
@@ -73,7 +78,9 @@ void TcpSocket::response(TcpData::ResponseType type, QMap<QString, QString>& dat
 {
 	QByteArray byteArray = MessageJson::getResponseByteArray(type, data);
 	write(byteArray);
+	qDebug() << u8"TcpSocket::response线程：" << QThread::currentThreadId();
 }
+
 
 /*************************************************
 Description: 处理客户端发起的获取验证码请求
@@ -98,6 +105,8 @@ void TcpSocket::verificationCode(QByteArray &byteArray)
 			this->code = code_tmp;
 		}
 	}
+
+	qDebug() << u8"TcpSocket::verificationCode线程：" << QThread::currentThreadId();
 }
 
 /*************************************************
@@ -178,6 +187,9 @@ void TcpSocket::enroll(QByteArray& byteArray)
 	//注册成功
 	data[responseTypeStr] = QString::number(TcpData::Enroll_Correct);
 	response(TcpData::Enroll_Response, data);
+
+
+	qDebug() << u8"TcpSocket::enroll线程：" << QThread::currentThreadId();
 }//差新建几张数据库的表
 
 /*************************************************
@@ -241,4 +253,6 @@ void TcpSocket::logIn(QByteArray& byteArray)
 	data.insert("mailAddress", mailAddress);
 	response(TcpData::LogIn_Response, data);
 	return;
+
+	qDebug() << u8"TcpSocket::logIn线程：" << QThread::currentThreadId();
 }
