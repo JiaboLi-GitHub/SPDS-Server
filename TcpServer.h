@@ -20,8 +20,8 @@ private:
 
 private:
     QMap<qintptr, TcpSocket*> tcpSockeMap;
+    QMap<qintptr, QThread*> threadMap;
     int thread_Count;
-    QThread* thread;
 
 private:
     int Ideal_Thread_Count;

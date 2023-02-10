@@ -18,5 +18,6 @@ private:
 private:
 	static const QStringList VerificationCode_Request_Str;
 	static const QStringList Enroll_Request_Str;
+	static const QStringList LogIn_Request_Str;
 };
 

@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>resources/configuration/mysql.txt</file>
+        <file>resources/configuration/mysql.json</file>
     </qresource>
 </RCC>

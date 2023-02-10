@@ -30,6 +30,9 @@
     <Filter Include="Data">
       <UniqueIdentifier>{1e0253f3-0b94-46a9-b78e-d84a515f450f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mysql">
+      <UniqueIdentifier>{1c5f8be9-ffc2-4b23-9c8e-159b93b502ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -53,6 +56,9 @@
     <ClCompile Include="CommonData.cpp">
       <Filter>Data</Filter>
     </ClCompile>
+    <ClCompile Include="MysqlConn.cpp">
+      <Filter>Mysql</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MessageJson.h">
@@ -63,6 +69,9 @@
     </ClInclude>
     <ClInclude Include="CommonData.h">
       <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="MysqlConn.h">
+      <Filter>Mysql</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

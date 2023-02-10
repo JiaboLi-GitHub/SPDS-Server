@@ -4,20 +4,21 @@
 #include<qsqlquery.h>
 #include<qsqlerror.h>
 #include<qmutex.h>
+#include<iostream>
 
 #include"TcpData.h"
 #include"MessageJson.h"
 #include"Email.h"
 #include"CommonData.h"
-
+#include"MysqlConn.h"
 #include<qdebug.h>
 #include<qhostaddress.h>
-
-
 
 TcpSocket::TcpSocket(qintptr id)
 {
 	setSocketDescriptor(id);
+	socketDescriptor = id;
+	mysqlConn = new MysqlConn(id);
 
 	//获取用户IP地址
 	this->ipv4_int32 = peerAddress().toIPv4Address();
@@ -29,7 +30,7 @@ TcpSocket::TcpSocket(qintptr id)
 
 TcpSocket::~TcpSocket()
 {
-	qDebug() << u8"释放";
+	delete mysqlConn;
 	qDebug() << u8"释放::线程：" << QThread::currentThreadId();
 }
 
@@ -56,17 +57,10 @@ void TcpSocket::read()
 	qDebug() << u8"TcpSocket::read线程：" << QThread::currentThreadId();
 }
 
-void TcpSocket::write(QByteArray& byteArray)
-{
-	qDebug() << u8"TcpSocket::write线程：" << QThread::currentThreadId();
-	write(byteArray);
-}
-
-
 void TcpSocket::disconnect()
 {
 	qDebug() << u8"TcpSocket disconnect线程：" << QThread::currentThreadId();
-	emit disconnected(socketDescriptor());
+	emit disconnected(socketDescriptor);
 }
 
 /*************************************************
@@ -80,7 +74,6 @@ void TcpSocket::response(TcpData::ResponseType type, QMap<QString, QString>& dat
 	write(byteArray);
 	qDebug() << u8"TcpSocket::response线程：" << QThread::currentThreadId();
 }
-
 
 /*************************************************
 Description: 处理客户端发起的获取验证码请求
@@ -134,27 +127,30 @@ void TcpSocket::enroll(QByteArray& byteArray)
 		response(TcpData::Enroll_Response, data);
 		return;
 	}
+	code.clear();
+
 
 	//锁住SQL中user表
 	QMutexLocker locker(&CommonData::sqlUser_Mutex);
+	
+	//查询数据库
+	QString sqlStr = "select * from user where mailAddress = '[mailAddress]'";
+	sqlStr.replace("[mailAddress]", mailAddress_tmp);
+	auto sqlQuery = mysqlConn->run(sqlStr);
 
-	//片段账号是否已经注册
-	QString query = "select * from user where mailAddress = '[mailAddress]'";
-	query.replace("[mailAddress]", mailAddress_tmp);
-	QSqlQuery sqlQuery;
-	sqlQuery.exec(query);
+	//账号是否已经注册
 	if (sqlQuery.next())
 	{
 		data[responseTypeStr] = QString::number(TcpData::Exist_Error);
-		response(TcpData::Enroll_Response,data);
+		response(TcpData::Enroll_Response,data);	
 		return;
 	}
 
-
-	if (mailAddress == mailAddress_tmp && code == code_tmp)
+	//注册成功
+	if (mailAddress == mailAddress_tmp)
 	{
 		//插入数据库user表
-		query = "insert into user values ('[mailAddress]',\
+		sqlStr = "insert into user values ('[mailAddress]',\
 							 			  '[userName]',\
 						  				  '[password]',\
 										  '[dateTime]',\
@@ -165,31 +161,18 @@ void TcpSocket::enroll(QByteArray& byteArray)
 		requestData["dateTime"] = dateTime.toString("yyyy-MM-dd hh:mm:ss");
 		requestData["endDateTime"] = dateTime.toString("yyyy-MM-dd hh:mm:ss");
 		requestData["ip"] = this->ipv4_str;
-
 		auto iterator = requestData.constBegin();
 		while (iterator!=requestData.constEnd())
 		{
 			QString  key  = "[" + iterator.key() + "]";
 			QString value = iterator.value();
-			query.replace(key, value);
+			sqlStr.replace(key, value);
 			iterator++;
 		}
-
-		bool res = sqlQuery.exec(query);
-		if (!res)//未知错误
-		{
-			data[responseTypeStr] = QString::number(TcpData::Enroll_error);
-			response(TcpData::Enroll_Response, data);
-			return;
-		}
+		sqlQuery= mysqlConn->run(sqlStr);
 	}
-
-	//注册成功
 	data[responseTypeStr] = QString::number(TcpData::Enroll_Correct);
 	response(TcpData::Enroll_Response, data);
-
-
-	qDebug() << u8"TcpSocket::enroll线程：" << QThread::currentThreadId();
 }//差新建几张数据库的表
 
 /*************************************************
@@ -213,8 +196,8 @@ void TcpSocket::logIn(QByteArray& byteArray)
 	//账号不存在
 	QString query = "select * from user where mailAddress = '[mailAddress]'";
 	query.replace("[mailAddress]", mailAddress_tmp);
-	QSqlQuery sqlQuery;
-	sqlQuery.exec(query);
+	QSqlQuery sqlQuery = mysqlConn->run(query);
+
 	bool res = sqlQuery.next();
 	if (!res)
 	{

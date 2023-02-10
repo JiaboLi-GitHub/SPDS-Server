@@ -11,7 +11,7 @@
 
 const QStringList MessageJson::VerificationCode_Request_Str = {"mailAddress"};
 const QStringList MessageJson::Enroll_Request_Str = { "userName","mailAddress","password","code" };
-
+const QStringList MessageJson::LogIn_Request_Str = {"mailAddress","password"};
 /*-------------------------------------------«Î«Û---------------------------------------------------*/
 
 /*************************************************
@@ -64,6 +64,7 @@ QStringList MessageJson::getRequestStr(TcpData::RequestType type)
 	{
 	case TcpData::VerificationCode:	requestStr = VerificationCode_Request_Str;	break;
 	case TcpData::Enroll_Request:	requestStr = Enroll_Request_Str;			break;
+	case TcpData::LogIn_Request:	requestStr = LogIn_Request_Str;			break;
 	default:
 		break;
 	}

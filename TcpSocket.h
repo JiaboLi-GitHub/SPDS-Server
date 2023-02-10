@@ -6,7 +6,7 @@
 #include<qrunnable.h>
 #include"CommonData.h"
 #include"TcpData.h"
-
+#include"MysqlConn.h"
 
 extern QMutex sqlUser_mutex;
 
@@ -27,7 +27,6 @@ private slots:
     void disconnect();
 
 private:
-    void write(QByteArray& byteArray);
     void response(TcpData::ResponseType type, QMap<QString, QString>& data);
     void verificationCode(QByteArray& byteArray);
     void enroll(QByteArray& byteArray);
@@ -37,16 +36,18 @@ protected:
     void run();
 
 private:
-    qint32          ipv4_int32;
+    qintptr socketDescriptor;
+    qint32        ipv4_int32;
     QString         ipv4_str;
 
 //登录注册模块
-private:
     QString userName;       //用户名
     QString mailAddress;    //邮箱号
     QString password;       //密码
     QString code;           //验证码
     QDateTime code_DateTme; //验证码生成时间
 
+/*数据库*/
+    MysqlConn *mysqlConn;
 };
 

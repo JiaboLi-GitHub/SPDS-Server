@@ -109,6 +109,7 @@
     <ClCompile Include="Email.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MessageJson.cpp" />
+    <ClCompile Include="MysqlConn.cpp" />
     <ClCompile Include="TcpData.cpp" />
     <ClCompile Include="TcpServer.cpp" />
     <ClCompile Include="TcpSocket.cpp" />
@@ -117,6 +118,7 @@
     <QtMoc Include="Email.h" />
     <ClInclude Include="CommonData.h" />
     <ClInclude Include="MessageJson.h" />
+    <ClInclude Include="MysqlConn.h" />
     <ClInclude Include="TcpData.h" />
     <QtMoc Include="TcpSocket.h" />
     <QtMoc Include="TcpServer.h" />
