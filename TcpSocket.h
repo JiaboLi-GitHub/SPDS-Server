@@ -4,11 +4,12 @@
 #include<qbytearray.h>
 #include<qdatetime.h>
 #include<qrunnable.h>
+#include<qstack.h>
 #include"CommonData.h"
 #include"TcpData.h"
 #include"MysqlConn.h"
 
-extern QMutex sqlUser_mutex;
+
 
 class TcpSocket :
     public QTcpSocket
@@ -31,6 +32,8 @@ private:
     void verificationCode(QByteArray& byteArray);
     void enroll(QByteArray& byteArray);
     void logIn(QByteArray& byteArray);
+    void detectionSave(QByteArray& byteArray);
+    void detectionRead();
 
 protected:
     void run();
@@ -49,5 +52,8 @@ private:
 
 /*数据库*/
     MysqlConn *mysqlConn;
+
+/*检测数据*/
+    const int SampleStack_Max=3;
 };
 

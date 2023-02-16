@@ -11,6 +11,7 @@
 #include"Email.h"
 #include"CommonData.h"
 #include"MysqlConn.h"
+#include"DetectionData.h"
 #include<qdebug.h>
 #include<qhostaddress.h>
 
@@ -49,6 +50,9 @@ void TcpSocket::read()
 		break;
 	case TcpData::LogIn_Request:
 		logIn(byteArray);
+		break;
+	case TcpData::Detection_Save_Request:
+		detectionSave(byteArray);
 		break;
 	default:
 		break;
@@ -238,4 +242,80 @@ void TcpSocket::logIn(QByteArray& byteArray)
 	return;
 
 	qDebug() << u8"TcpSocket::logIn线程：" << QThread::currentThreadId();
+}
+
+//改成读写锁
+
+/*************************************************
+Description: 保存单次坐姿检测数据
+	  Input: byteArray=客户端发来的数据
+	 Return: 空
+*************************************************/
+void TcpSocket::detectionSave(QByteArray& byteArray)
+{
+	QMap<QString, QString> requestData = MessageJson::getRequestData(byteArray);
+	QDate date_tmp = QDate::fromString(requestData["date"]);
+	DetectionData::Detection_Result type_tmp = (DetectionData::Detection_Result)requestData["type"].toInt();
+
+	//查询数据库
+	QString sqlStr = "select * from [formname] where date= '[date]';";
+	QString dateStr = date_tmp.toString();
+	QString formname = "detectionData" + mailAddress;
+	sqlStr.replace("[formname]", formname);
+	sqlStr.replace("[date]", dateStr);
+	QSqlQuery sqlQuery = mysqlConn->run(sqlStr);
+
+	auto detectionData = new DetectionData(date_tmp);
+	if (!sqlQuery.next())
+	{
+		//向数据库添加代表当日的记录行
+		sqlStr = "INSERT INTO [formname] ( date, accuracy, number, normal, head, front, back, left, right )\
+				  VALUES\
+				  ('[date]', 1, 0, 0, 0, 0, 0, 0, 0 ); ";
+		sqlStr.replace("[formname]", formname);
+		sqlStr.replace("[date]", dateStr);
+		mysqlConn->run(sqlStr);
+	}
+	else
+	{
+		detectionData->setDetectionData(sqlQuery);
+	}
+	detectionData->addSample(type_tmp);
+
+	sqlStr = "UPDATE   [formname]	\
+			SET date = [date],		\
+			accuracy = [accuracy],	\
+			  number = [number],	\
+			  normal = [normal],	\
+			    head = [head],		\
+			   front = [front],		\
+			    back = [back],		\
+			  `left` = [left],		\
+			 `right` = [right]; ";
+	sqlStr.replace("[formname]", formname);
+	sqlStr.replace("[date]", detectionData->date.toString());
+	sqlStr.replace("[accuracy]", QString::number(detectionData->accuracy));
+	sqlStr.replace("[number]", QString::number(detectionData->number));
+	sqlStr.replace("[normal]", QString::number(detectionData->normal));
+	sqlStr.replace("[head]", QString::number(detectionData->head));
+	sqlStr.replace("[front]", QString::number(detectionData->front));
+	sqlStr.replace("[back]", QString::number(detectionData->back));
+	sqlStr.replace("[left]", QString::number(detectionData->left));
+	sqlStr.replace("[right]", QString::number(detectionData->right));
+	mysqlConn->run(sqlStr);
+}    
+
+/*************************************************
+Description: 获取坐姿数据
+	  Input: byteArray=客户端发来的数据
+	 Return: 空
+*************************************************/
+void TcpSocket::detectionRead()
+{
+	QString sqlStr = "select * from [formname];";
+	QString formname = "detectionData" + mailAddress;
+	sqlStr.replace("[formname]", formname);
+	QSqlQuery sqlQuery = mysqlConn->run(sqlStr);
+	QByteArray byteArray = MessageJson::getDetectionDataByteArray(TcpData::Detection_Read_Response, sqlQuery);
+	write(byteArray);
 }

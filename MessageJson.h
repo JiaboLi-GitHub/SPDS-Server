@@ -1,6 +1,7 @@
 #pragma once
 #include<qbytearray.h>
 #include<qjsonobject.h>
+#include<qsqlquery.h>
 #include"TcpData.h"
 
 
@@ -10,6 +11,7 @@ public:
 	static TcpData::RequestType getRequestType(QByteArray &byteArray);
 	static QMap<QString, QString> getRequestData(QByteArray& byteArray);
 	static QByteArray getResponseByteArray(TcpData::ResponseType type,QMap<QString,QString> data);
+	static QByteArray MessageJson::getDetectionDataByteArray(TcpData::ResponseType type,QSqlQuery &sqlQuery);
 
 private:
 	static QStringList getRequestStr(TcpData::RequestType type);

@@ -7,7 +7,6 @@
 class MysqlConn
 {
 public: 
-	MysqlConn(){};
 	MysqlConn(qintptr id);
 	~MysqlConn();
 

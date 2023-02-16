@@ -59,6 +59,9 @@
     <ClCompile Include="MysqlConn.cpp">
       <Filter>Mysql</Filter>
     </ClCompile>
+    <ClCompile Include="DetectionData.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MessageJson.h">
@@ -72,6 +75,9 @@
     </ClInclude>
     <ClInclude Include="MysqlConn.h">
       <Filter>Mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="DetectionData.h">
+      <Filter>Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

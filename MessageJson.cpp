@@ -8,6 +8,7 @@
 #include<qstringlist.h>
 #include"TcpData.h"
 #include<qdebug.h>
+#include"DetectionData.h"
 
 const QStringList MessageJson::VerificationCode_Request_Str = {"mailAddress"};
 const QStringList MessageJson::Enroll_Request_Str = { "userName","mailAddress","password","code" };
@@ -75,9 +76,9 @@ QStringList MessageJson::getRequestStr(TcpData::RequestType type)
 
 
 /*************************************************
-Description: 根据请求类型获取数据格式
-	  Input: 请求类型
-	 Return: 数据格式
+Description: 数据序列化
+	  Input: type=响应类型 data=数据
+	 Return: 字符串
 *************************************************/
 QByteArray MessageJson::getResponseByteArray(TcpData::ResponseType type, QMap<QString, QString> data)
 {
@@ -94,6 +95,30 @@ QByteArray MessageJson::getResponseByteArray(TcpData::ResponseType type, QMap<QS
 	ResponseData_json.insert("data", data_json);
 	
 	QJsonDocument document = QJsonDocument::QJsonDocument(ResponseData_json);
-	QByteArray requestCode_byteArray = document.toBinaryData();
-	return requestCode_byteArray;
+	return document.toBinaryData();
+}
+
+/*************************************************
+Description: 数据序列化
+	  Input: 请求类型
+	 Return: 数据格式
+*************************************************/
+QByteArray MessageJson::getDetectionDataByteArray(TcpData::ResponseType type,QSqlQuery &sqlQuery)
+{
+	int n = 0;
+	QJsonObject responseData_json;
+	QJsonArray jsonArray;
+	responseData_json.insert("ResponseType", type);
+
+	while (sqlQuery.next())
+	{
+		n++;
+		DetectionData detectionData;
+		detectionData.setDetectionData(sqlQuery);
+		QJsonObject jsonObject = detectionData.getQJsonObject();
+		jsonArray.append(jsonObject);
+	}
+	responseData_json.insert("data", jsonArray);
+	QJsonDocument document = QJsonDocument::QJsonDocument(responseData_json);
+	return document.toBinaryData();;
 }
