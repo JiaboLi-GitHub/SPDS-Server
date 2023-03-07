@@ -1,4 +1,4 @@
-#include "MessageJson.h"
+#include "JsonServer.h"
 #include<qstring.h>
 #include<qjsondocument.h>
 #include<qjsonarray.h>
@@ -8,19 +8,17 @@
 #include<qstringlist.h>
 #include"TcpData.h"
 #include<qdebug.h>
-#include"DetectionData.h"
+#include"SPDData.h"
+#include"MysqlServer.h"
 
-const QStringList MessageJson::VerificationCode_Request_Str = {"mailAddress"};
-const QStringList MessageJson::Enroll_Request_Str = { "userName","mailAddress","password","code" };
-const QStringList MessageJson::LogIn_Request_Str = {"mailAddress","password"};
-/*-------------------------------------------请求---------------------------------------------------*/
+
 
 /*************************************************
 Description: 解析请求类型
 	  Input: 来自客户端的请求字节数组
 	 Return: 请求类型
 *************************************************/
-TcpData::RequestType MessageJson::getRequestType(QByteArray& byteArray)
+TcpData::RequestType JsonServer::getRequestType(QByteArray& byteArray)
 {
 	QJsonDocument document = QJsonDocument::fromBinaryData(byteArray);
 	QJsonObject request_json = document.object();
@@ -30,12 +28,52 @@ TcpData::RequestType MessageJson::getRequestType(QByteArray& byteArray)
 }
 
 
+EnrollData JsonServer::toEnrollData(QByteArray& byteArray)
+{
+	QJsonDocument document = QJsonDocument::fromBinaryData(byteArray);
+	QJsonObject request_json = document.object();
+	QJsonObject data_json = request_json["data"].toObject();
+	
+	EnrollData enrollData;
+	enrollData.userName = data_json["userName"].toString();
+	enrollData.mailAddress = data_json["mailAddress"].toString();
+	enrollData.password = data_json["password"].toString();
+	enrollData.code = data_json["userName"].toInt();
+	return enrollData;
+}
+
+QByteArray JsonServer::toQByteArray(EnrollData data)
+{
+	QJsonObject ResponseData_json,data_json;
+	data_json.insert("Enroll_Response", data.enroll_response);
+	ResponseData_json.insert("ResponseType", TcpData::Enroll_Response);
+	ResponseData_json.insert("data", data_json);
+	QJsonDocument document = QJsonDocument::QJsonDocument(ResponseData_json);
+	return document.toBinaryData();
+}
+
+
+
+
+
+
+
+
+
+
+const QStringList JsonServer::VerificationCode_Request_Str = {"mailAddress"};
+const QStringList JsonServer::Enroll_Request_Str = { "userName","mailAddress","password","code" };
+const QStringList JsonServer::LogIn_Request_Str = {"mailAddress","password"};
+/*-------------------------------------------请求---------------------------------------------------*/
+
+
+
 /*************************************************
 Description: 解析请求数据
 	  Input: 来自客户端的请求字节数组
 	 Return: 是否连接成功
 *************************************************/
-QMap<QString, QString> MessageJson::getRequestData(QByteArray& byteArray)
+QMap<QString, QString> JsonServer::getRequestData(QByteArray& byteArray)
 {
 	QJsonDocument document = QJsonDocument::fromBinaryData(byteArray);
 	QJsonObject request_json = document.object();
@@ -58,7 +96,7 @@ Description: 根据请求类型获取数据格式
 	  Input: 请求类型
 	 Return: 数据格式
 *************************************************/
-QStringList MessageJson::getRequestStr(TcpData::RequestType type)
+QStringList JsonServer::getRequestStr(TcpData::RequestType type)
 {
 	QStringList requestStr;
 	switch (type)
@@ -80,7 +118,7 @@ Description: 数据序列化
 	  Input: type=响应类型 data=数据
 	 Return: 字符串
 *************************************************/
-QByteArray MessageJson::getResponseByteArray(TcpData::ResponseType type, QMap<QString, QString> data)
+QByteArray JsonServer::getResponseByteArray(TcpData::ResponseType type, QMap<QString, QString> data)
 {
 	QJsonObject ResponseData_json;
 	ResponseData_json.insert("ResponseType", type);
@@ -103,7 +141,7 @@ Description: 数据序列化
 	  Input: 请求类型
 	 Return: 数据格式
 *************************************************/
-QByteArray MessageJson::getDetectionDataByteArray(TcpData::ResponseType type,QSqlQuery &sqlQuery)
+QByteArray JsonServer::getDetectionDataByteArray(TcpData::ResponseType type,QSqlQuery &sqlQuery)
 {
 	int n = 0;
 	QJsonObject responseData_json;
@@ -113,12 +151,26 @@ QByteArray MessageJson::getDetectionDataByteArray(TcpData::ResponseType type,QSq
 	while (sqlQuery.next())
 	{
 		n++;
-		DetectionData detectionData;
-		detectionData.setDetectionData(sqlQuery);
-		QJsonObject jsonObject = detectionData.getQJsonObject();
+		SPDData spdData = MysqlServer::getDetectionData(sqlQuery);
+		QJsonObject jsonObject = JsonServer::toQJsonObject(spdData);
 		jsonArray.append(jsonObject);
 	}
 	responseData_json.insert("data", jsonArray);
 	QJsonDocument document = QJsonDocument::QJsonDocument(responseData_json);
 	return document.toBinaryData();;
+}
+
+QJsonObject JsonServer::toQJsonObject(SPDData &detectionData)
+{
+	QJsonObject jsonObject;
+	jsonObject.insert("date", detectionData.date.toString());
+	jsonObject.insert("totalcount", detectionData.accuracy);
+	jsonObject.insert("pos0", detectionData.number);
+	jsonObject.insert("pos1", detectionData.normal);
+	jsonObject.insert("pos2", detectionData.head);
+	jsonObject.insert("pos3", detectionData.front);
+	jsonObject.insert("pos4", detectionData.back);
+	jsonObject.insert("pos5", detectionData.left);
+	jsonObject.insert("pos6", detectionData.right);
+	return jsonObject;
 }

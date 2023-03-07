@@ -1,4 +1,4 @@
-#include "MysqlConn.h"
+#include "MysqlServer.h"
 #include<qfile.h>
 #include<qjsondocument.h>
 #include<qjsonobject.h>
@@ -6,15 +6,15 @@
 #include<iostream>
 #include<qdebug.h>
 
-const QString MysqlConn::ConfigurationFile = ":/resources/configuration/mysql.json";
-QString MysqlConn::DatabaseName;
-QString MysqlConn::HostName;
-QString MysqlConn::Port;
-QString MysqlConn::UserName;
-QString MysqlConn::Password;
+const QString MysqlServer::ConfigurationFile = ":/resources/configuration/mysql.json";
+QString MysqlServer::DatabaseName;
+QString MysqlServer::HostName;
+QString MysqlServer::Port;
+QString MysqlServer::UserName;
+QString MysqlServer::Password;
 
 
-MysqlConn::MysqlConn(qintptr id)
+MysqlServer::MysqlServer(qintptr id)
 {
 	//连接数据库
 	QString name = QString::number(id);
@@ -34,7 +34,7 @@ MysqlConn::MysqlConn(qintptr id)
 	}
 }
 
-MysqlConn::~MysqlConn()
+MysqlServer::~MysqlServer()
 {
 	SQL.close();
 	qDebug() << u8"数据库连接断开";
@@ -45,7 +45,7 @@ Description: 执行sql语句
 	  Input: sqlStr=sql语句
 	 Return: 查询结果
 *************************************************/
-QSqlQuery MysqlConn::run(QString sqlStr)
+QSqlQuery MysqlServer::run(QString sqlStr)
 {
 	QSqlQuery sqlQuery= QSqlQuery(SQL);
 	sqlQuery.exec(sqlStr);
@@ -57,7 +57,7 @@ Description: 读取数据库配置文件
 	  Input: 
 	 Return: 
 *************************************************/
-void MysqlConn::readMysqlConfiguration()
+void MysqlServer::readConfiguration()
 {
 	QFile file(ConfigurationFile);
 	file.open(QFile::ReadOnly);
@@ -71,4 +71,24 @@ void MysqlConn::readMysqlConfiguration()
 	Port = json["Port"].toString();
 	UserName = json["UserName"].toString();
 	Password = json["Password"].toString();
+}
+
+/*************************************************
+Description: 将数据库查询到的数据封装成DetectionData类型
+	  Input: 数据库查询结果
+	 Return: DetectionData实例
+*************************************************/
+SPDData MysqlServer::getDetectionData(QSqlQuery& sqlQuery)
+{
+	SPDData data;
+	data.date = QDate::fromString(sqlQuery.value("accuracy").toString());
+	data.accuracy = sqlQuery.value("accuracy").Double;
+	data.number = sqlQuery.value("number").Int;
+	data.normal = sqlQuery.value("normal").Int;
+	data.head = sqlQuery.value("head").Int;
+	data.front = sqlQuery.value("front").Int;
+	data.back = sqlQuery.value("back").Int;
+	data.left = sqlQuery.value("left").Int;
+	data.right = sqlQuery.value("right").Int;
+	return data;
 }

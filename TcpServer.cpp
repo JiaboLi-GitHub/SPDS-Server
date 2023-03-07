@@ -1,5 +1,5 @@
 #include "TcpServer.h"
-#include"MysqlConn.h"
+#include"MysqlServer.h"
 
 #define toUTF8(str)  QString::fromLocal8Bit(str)
 #include<iostream>
@@ -59,15 +59,11 @@ Description: 套接字断开所执行的槽函数
 *************************************************/
 void TcpServer::tcpSocketDisconnect(qintptr socketDescriptor)
 {
-	auto tcpSocket = tcpSockeMap[socketDescriptor];
 	auto thread = threadMap[socketDescriptor];
-
 	thread->quit();
 	thread->wait();
 	thread->deleteLater();
 	thread_Count--;
 	tcpSockeMap.remove(socketDescriptor);
 	threadMap.remove(socketDescriptor);
-
-	qDebug() << u8"TcpServer::tcpSocketDisconnect线程："<< QThread::currentThreadId();
 }

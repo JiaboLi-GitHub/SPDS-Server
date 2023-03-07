@@ -1,4 +1,5 @@
 #pragma once
+#include<qstring.h>
 class TcpData
 {
 public:
@@ -13,7 +14,7 @@ public:
 		Enroll_Request,			//注册
 		LogIn_Request,			//登录
 		Detection_Save_Request,	//保存样本
-		Detection_Read_Request		//读取样本
+		Detection_Read_Request	//读取样本
 	};
 	
 	//响应类型
@@ -41,8 +42,18 @@ public:
 		Password_Error,		//密码错误
 		Login_Error			//未知错误
 	};
-
-
-
 };
 
+class EnrollData
+{
+public:
+	EnrollData(){}
+	~EnrollData(){}
+
+public:
+	QString userName;
+	QString mailAddress;
+	QString password;
+	int code;
+	int enroll_response;
+};

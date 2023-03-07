@@ -1,45 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>qml;cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>qrc;rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Form Files">
-      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
-      <Extensions>ui</Extensions>
-    </Filter>
-    <Filter Include="Translation Files">
-      <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
-      <Extensions>ts</Extensions>
-    </Filter>
     <Filter Include="Tcp Server">
       <UniqueIdentifier>{4db76198-ab62-403d-8723-927d3f1e856f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Json">
-      <UniqueIdentifier>{e3724c40-884d-47ba-9c32-06a80fb388d8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data">
       <UniqueIdentifier>{1e0253f3-0b94-46a9-b78e-d84a515f450f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Mysql">
-      <UniqueIdentifier>{1c5f8be9-ffc2-4b23-9c8e-159b93b502ef}</UniqueIdentifier>
+    <Filter Include="Server">
+      <UniqueIdentifier>{846eedb0-12b8-4bd8-bf42-dbbcfa4d9b0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>qml;cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MessageJson.cpp">
-      <Filter>Json</Filter>
+      <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="TcpData.cpp">
       <Filter>Data</Filter>
@@ -50,45 +32,48 @@
     <ClCompile Include="TcpSocket.cpp">
       <Filter>Tcp Server</Filter>
     </ClCompile>
-    <ClCompile Include="Email.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CommonData.cpp">
       <Filter>Data</Filter>
     </ClCompile>
-    <ClCompile Include="MysqlConn.cpp">
-      <Filter>Mysql</Filter>
-    </ClCompile>
-    <ClCompile Include="DetectionData.cpp">
+    <ClCompile Include="SPDData.cpp">
       <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonServer.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Email.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="MysqlServer.cpp">
+      <Filter>Server</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MessageJson.h">
-      <Filter>Json</Filter>
-    </ClInclude>
     <ClInclude Include="TcpData.h">
       <Filter>Data</Filter>
     </ClInclude>
     <ClInclude Include="CommonData.h">
       <Filter>Data</Filter>
     </ClInclude>
-    <ClInclude Include="MysqlConn.h">
-      <Filter>Mysql</Filter>
-    </ClInclude>
-    <ClInclude Include="DetectionData.h">
+    <ClInclude Include="SPDData.h">
       <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonServer.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="MysqlServer.h">
+      <Filter>Server</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="TcpServer.h">
       <Filter>Tcp Server</Filter>
     </QtMoc>
-    <QtMoc Include="Email.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="TcpSocket.h">
       <Filter>Tcp Server</Filter>
+    </QtMoc>
+    <QtMoc Include="Email.h">
+      <Filter>Server</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>

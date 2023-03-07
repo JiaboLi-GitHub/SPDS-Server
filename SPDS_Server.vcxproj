@@ -106,11 +106,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CommonData.cpp" />
-    <ClCompile Include="DetectionData.cpp" />
+    <ClCompile Include="SPDData.cpp" />
     <ClCompile Include="Email.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MessageJson.cpp" />
-    <ClCompile Include="MysqlConn.cpp" />
+    <ClCompile Include="JsonServer.cpp" />
+    <ClCompile Include="MysqlServer.cpp" />
     <ClCompile Include="TcpData.cpp" />
     <ClCompile Include="TcpServer.cpp" />
     <ClCompile Include="TcpSocket.cpp" />
@@ -118,9 +118,9 @@
   <ItemGroup>
     <QtMoc Include="Email.h" />
     <ClInclude Include="CommonData.h" />
-    <ClInclude Include="DetectionData.h" />
-    <ClInclude Include="MessageJson.h" />
-    <ClInclude Include="MysqlConn.h" />
+    <ClInclude Include="SPDData.h" />
+    <ClInclude Include="JsonServer.h" />
+    <ClInclude Include="MysqlServer.h" />
     <ClInclude Include="TcpData.h" />
     <QtMoc Include="TcpSocket.h" />
     <QtMoc Include="TcpServer.h" />

@@ -7,9 +7,7 @@
 #include<qstack.h>
 #include"CommonData.h"
 #include"TcpData.h"
-#include"MysqlConn.h"
-
-
+#include"MysqlServer.h"
 
 class TcpSocket :
     public QTcpSocket
@@ -34,6 +32,7 @@ private:
     void logIn(QByteArray& byteArray);
     void detectionSave(QByteArray& byteArray);
     void detectionRead();
+    QString tokenBuilder(QString mailAddress);
 
 protected:
     void run();
@@ -51,9 +50,10 @@ private:
     QDateTime code_DateTme; //验证码生成时间
 
 /*数据库*/
-    MysqlConn *mysqlConn;
+    MysqlServer *mysqlServer;
 
-/*检测数据*/
+/*常量*/
+    const int TOKENLEN=512;           //token长度
     const int SampleStack_Max=3;
 };
 

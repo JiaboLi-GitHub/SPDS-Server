@@ -5,9 +5,7 @@
 #include<qjsonobject.h>
 #include"CommonData.h"
 
-
-
-class DetectionData
+class SPDData
 {
 public:
 	//检测结果
@@ -22,15 +20,12 @@ public:
 	};
 
 public:
-	DetectionData();
-	DetectionData(QDate date);
-	~DetectionData();
+	SPDData();
+	SPDData(QDate date);
+	~SPDData();
 
 public:
-    void setDetectionData(QSqlQuery& sqlQuery);
 	void addSample(Detection_Result type);
-	QJsonObject getQJsonObject();
-
 
 public:
     QDate   date;       //时间
@@ -42,6 +37,5 @@ public:
     int     back;       //后倾
     int     left;       //左倾
     int     right;      //右倾
-
 };
 

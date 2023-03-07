@@ -3,18 +3,20 @@
 #include<qsqlquery.h>
 #include<qsqlerror.h>
 #include<qsqldatabase.h>
+#include"SPDData.h"
 
-class MysqlConn
+class MysqlServer
 {
 public: 
-	MysqlConn(qintptr id);
-	~MysqlConn();
+	MysqlServer(qintptr id);
+	~MysqlServer();
 
 public:
 	QSqlQuery run(QString sqlStr);
 
 public:
-	static void readMysqlConfiguration();
+	static void readConfiguration();
+	static SPDData getDetectionData(QSqlQuery& sqlQuery);
 
 private:
 	/*数据库配置信息*/
