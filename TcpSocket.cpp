@@ -54,6 +54,9 @@ void TcpSocket::read()
 	case TcpData::Detection_Save_Request:
 		detectionSave(byteArray);
 		break;
+	case TcpData::Quit_Request:
+		userQuit();
+		break;
 	default:
 		break;
 	}
@@ -65,7 +68,6 @@ void TcpSocket::disconnect()
 {
 	emit disconnected(socketDescriptor);
 }
-
 
 /*************************************************
 Description: 处理客户端发起的获取验证码请求
@@ -350,4 +352,12 @@ QString TcpSocket::tokenBuilder(QString mailAddress)
 		token += (char)num;
 	}
 	return token;
+}
+
+void TcpSocket::userQuit()
+{
+	userName.clear();
+	mailAddress.clear();
+	password.clear();
+	code.clear();
 }

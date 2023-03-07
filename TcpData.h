@@ -1,10 +1,7 @@
 #pragma once
-#include <qobject.h>
-#include <qdatetime.h>
-
-class TcpData : QObject
+#include<qstring.h>
+class TcpData
 {
-	Q_OBJECT
 public:
 	TcpData();
 	~TcpData();
@@ -17,36 +14,26 @@ public:
 		Enroll_Request,			//注册
 		LogIn_Request,			//登录
 		Detection_Save_Request,	//保存样本
-		Detection_Read_Request	//读取样本
+		Detection_Read_Request,	//读取样本
+		Auto_Login_Request,		//自动登录请求
+		Quit_Request			//注销登录
 	};
-
+	
 	//响应类型
 	enum ResponseType
 	{
 		Enroll_Response,		//注册
 		LogIn_Response,			//登录
-		Detection_Read_Response	//读取样本响应
+		Detection_Read_Response,//读取样本响应
+		Auto_Login_Response		//自动登录响应
 	};
-
-public:
-	SPDData(QDate date, Detection_Result result) :
-		date(date), result(result) {}
-	~SPDData() = default;
-
-public:
-	QDate date;		//日期
-	int result;//监测结果
 };
 
-class EnrollData :QObject
+class EnrollData
 {
-	Q_OBJECT
 public:
-	EnrollData(QString userName, QString mailAddress, QString password,
-		int code, int enroll_response) :
-		userName(userName), mailAddress(mailAddress), password(password),
-		code(code), enroll_response(enroll_response) {}
-	~EnrollData() {}
+	EnrollData(){}
+	~EnrollData(){}
 
 public:
 	//注册响应类型
@@ -55,7 +42,7 @@ public:
 		Enroll_Correct,		//注册成功
 		Code_Error,			//验证码错误
 		Exist_Error,		//账号已注册
-		Enroll_error		//未知错误
+		Enroll_Error		//未知错误
 	};
 	QString userName;
 	QString mailAddress;
@@ -64,14 +51,10 @@ public:
 	int enroll_response;
 };
 
-class LoginData :QObject
+class LoginData
 {
-	Q_OBJECT
 public:
-	LoginData(QString userName, QString mailAddress, QString password,
-		QString token, int login_response) :
-		userName(userName), mailAddress(mailAddress), password(password),
-		token(token), login_response(login_response) {}
+	LoginData() {};
 	~LoginData() {};
 
 public:
