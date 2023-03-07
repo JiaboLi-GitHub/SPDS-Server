@@ -66,17 +66,6 @@ void TcpSocket::disconnect()
 	emit disconnected(socketDescriptor);
 }
 
-/*************************************************
-Description: 将响应数据序列化并发出通讯请求
-	  Input: type=响应类型 data=响应数据
-	 Return: 空
-*************************************************/
-void TcpSocket::response(TcpData::ResponseType type, QMap<QString, QString>& data)
-{
-	QByteArray byteArray = JsonServer::getResponseByteArray(type, data);
-	write(byteArray);
-	qDebug() << u8"TcpSocket::response线程：" << QThread::currentThreadId();
-}
 
 /*************************************************
 Description: 处理客户端发起的获取验证码请求
@@ -86,8 +75,7 @@ Description: 处理客户端发起的获取验证码请求
 void TcpSocket::verificationCode(QByteArray &byteArray)
 {
 	//获取邮箱号
-	QMap<QString,QString> requestData= JsonServer::getRequestData(byteArray);
-	QString mailAddress_tmp = requestData["mailAddress"];
+	QString mailAddress_tmp = JsonServer::getMailAddress(byteArray);
 
 	Email email;
 	if (email.connect())
@@ -117,7 +105,7 @@ void TcpSocket::enroll(QByteArray& byteArray)
 	//对比验证码
 	if (enrollData.code != code && QDateTime::currentDateTime()<=code_DateTme.addSecs(300))
 	{
-		enrollData.enroll_response = TcpData::Code_Error;
+		enrollData.enroll_response = EnrollData::Code_Error;
 		QByteArray resByteArray = JsonServer::toQByteArray(enrollData);
 		write(byteArray);
 		return;
@@ -135,7 +123,7 @@ void TcpSocket::enroll(QByteArray& byteArray)
 	//账号是否已经注册
 	if (sqlQuery.next())
 	{
-		enrollData.enroll_response = TcpData::Exist_Error;
+		enrollData.enroll_response = EnrollData::Exist_Error;
 		QByteArray resByteArray = JsonServer::toQByteArray(enrollData);
 		write(byteArray);
 		return;
@@ -154,14 +142,14 @@ void TcpSocket::enroll(QByteArray& byteArray)
 										  '[token]')";
 
 		sqlStr.replace("[mailAddress]", enrollData.mailAddress);
-		sqlStr.replace("[userName]", enrollData.userName);
-		sqlStr.replace("[password]", enrollData.password);
+		sqlStr.replace("[userName]",	enrollData.userName);
+		sqlStr.replace("[password]",	enrollData.password);
 		sqlStr.replace("[enrollDate]",	QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
 		sqlStr.replace("[ip]",			this->ipv4_str);
 		sqlStr.replace("[token]",		tokenBuilder(enrollData.mailAddress));
 		sqlQuery= mysqlServer->run(sqlStr);
 	}
-	enrollData.enroll_response = TcpData::Enroll_Correct;
+	enrollData.enroll_response = EnrollData::Enroll_Correct;
 	QByteArray resByteArray = JsonServer::toQByteArray(enrollData);
 	write(byteArray);
 	
@@ -190,26 +178,21 @@ Description: 处理客户端发起的登录请求
 *************************************************/
 void TcpSocket::logIn(QByteArray& byteArray)
 {
-	//获取请求登录数据
-	QMap<QString, QString> requestData = JsonServer::getRequestData(byteArray);
-	QString mailAddress_tmp = requestData["mailAddress"];
-	QString    password_tmp = requestData["password"];
-	QMap<QString, QString> data;
-	QString responseTypeStr = "LogIn_Response";
-	data.insert(responseTypeStr, QString::number(TcpData::Login_Correct));
+	LoginData logInData = JsonServer::toLogInData(byteArray);
 
 	//锁住SQL中user表
 	QMutexLocker sqlUser_Locker(&CommonData::sqlUser_Mutex);
 
 	//账号不存在
 	QString query = "select * from user where mailAddress = '[mailAddress]'";
-	query.replace("[mailAddress]", mailAddress_tmp);
+	query.replace("[mailAddress]", logInData.mailAddress);
 	QSqlQuery sqlQuery = mysqlServer->run(query);
 	bool res = sqlQuery.next();
 	if (!res)
 	{
-		data[responseTypeStr] = TcpData::Account_Error;
-		response(TcpData::LogIn_Response,data);
+		logInData.login_response = LoginData::Account_Error;
+		QByteArray resByteArray = JsonServer::toQByteArray(logInData);
+		write(resByteArray);
 		return;
 	}
 
@@ -217,32 +200,34 @@ void TcpSocket::logIn(QByteArray& byteArray)
 	QString    userName_sql = sqlQuery.value("userName").toString();
 	QString mailAddress_sql = sqlQuery.value("mailAddress").toString();
 	QString    password_sql = sqlQuery.value("password").toString();
-	if (password_sql != password_tmp)
+	if (password_sql != logInData.password)
 	{
-		data[responseTypeStr] = TcpData::Password_Error;
-		response(TcpData::LogIn_Response, data);
+		logInData.login_response = LoginData::Password_Error;
+		QByteArray resByteArray = JsonServer::toQByteArray(logInData);
+		write(resByteArray);
 		return;
 	}
 
 	//已在线
 	QMutexLocker existMap_Locker(&CommonData::existMap_Mutex);
-	if (CommonData::existMap[mailAddress_tmp])
+	if (CommonData::existMap[logInData.mailAddress])
 	{
-		data[responseTypeStr] = TcpData::Login_Error;
-		response(TcpData::LogIn_Response, data);
+		logInData.login_response = LoginData::Login_Error;
+		QByteArray resByteArray = JsonServer::toQByteArray(logInData);
+		write(resByteArray);
 		return;
 	}
-	CommonData::existMap[mailAddress_tmp] = true;
+	CommonData::existMap[logInData.mailAddress] = true;
 
 	//登录成功
 	userName = userName_sql;
 	mailAddress = mailAddress_sql;
 	password = password_sql;
 	QString token = tokenBuilder(mailAddress);
-	data[responseTypeStr] = TcpData::Login_Correct;
-	data.insert("userName", userName);
-	data.insert("mailAddress", mailAddress);
-	response(TcpData::LogIn_Response, data);
+	logInData.token = token;
+	logInData.login_response = LoginData::Login_Correct;
+	QByteArray resByteArray = JsonServer::toQByteArray(logInData);
+	write(resByteArray);
 
 	//更新数据库中的token
 	QString sqlStr = "update user set token=[token] where mailAddress=[mailAddress];";
@@ -259,9 +244,7 @@ Description: 保存单次坐姿检测数据
 *************************************************/
 void TcpSocket::detectionSave(QByteArray& byteArray)
 {
-	QMap<QString, QString> requestData = JsonServer::getRequestData(byteArray);
-	QDate date_tmp = QDate::fromString(requestData["date"]);
-	SPDData::Detection_Result type_tmp = (SPDData::Detection_Result)requestData["type"].toInt();
+	SPDOnceData spdOnceData = JsonServer::toSPDOnceData(byteArray);
 
 	//查询数据库
 	QString sqlStr = "select * from [tableName] a order by id desc limit 1;";
@@ -273,13 +256,13 @@ void TcpSocket::detectionSave(QByteArray& byteArray)
 	{
 		QString date_sql = sqlQuery.value("date").toString();
 		id = sqlQuery.value("id").toInt();
-		if (date_sql != date_tmp.toString())
+		if (date_sql != spdOnceData.date.toString())
 		{
 			st = false;
 		}
 	}
 
-	SPDData detectionData(date_tmp);
+	SPDData detectionData(spdOnceData.date);
 	//是否存在今日数据
 	if (!st)
 	{
@@ -288,14 +271,14 @@ void TcpSocket::detectionSave(QByteArray& byteArray)
 				  ('[id]','[date]', 1, 0, 0, 0, 0, 0, 0, 0 ); ";
 		sqlStr.replace("[tableName]", mailAddress);
 		sqlStr.replace("[id]", QString::number(id + 1));
-		sqlStr.replace("[date]", date_tmp.toString());
+		sqlStr.replace("[date]", spdOnceData.date.toString());
 		mysqlServer->run(sqlStr);
 	}
 	else
 	{
-		detectionData = MysqlServer::getDetectionData(sqlQuery);
+		detectionData = MysqlServer::getSPDData(sqlQuery);
 	}
-	detectionData.addSample(type_tmp);
+	detectionData.addSample(spdOnceData.result);
 
 	sqlStr = "UPDATE   [formname]	\
 			SET date = [date],		\
@@ -340,8 +323,15 @@ void TcpSocket::detectionRead()
 	sqlStr.replace("[SampleStack_Max]", QString::number(SampleStack_Max));
 	sqlStr.replace("[begin]", QString::number(n >= SampleStack_Max ? n - SampleStack_Max : 0));
 	sqlQuery = mysqlServer->run(sqlStr);
-	QByteArray byteArray = JsonServer::getDetectionDataByteArray(TcpData::Detection_Read_Response, sqlQuery);
-	write(byteArray);
+
+	QVector<SPDData> spdDataList;
+	while (sqlQuery.next())
+	{
+		SPDData spdData = MysqlServer::getSPDData(sqlQuery);
+		spdDataList.append(spdData);
+	}
+	QByteArray resByteArray = JsonServer::toQByteArray(spdDataList);
+	write(resByteArray);
 }
 
 /*************************************************

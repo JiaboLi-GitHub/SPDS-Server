@@ -5,27 +5,41 @@
 #include<qjsonobject.h>
 #include"CommonData.h"
 
-class SPDData
+class SPDOnceData
 {
 public:
 	//检测结果
 	enum Detection_Result
 	{
-		Normal,     //正常
-		Head,       //托头
-		Front,      //前倾
-		Back,       //后倾
-		Left,       //左倾
-		Right      //右倾
+		Normal, //正常
+		Head,   //托头
+		Front,  //前倾
+		Back,   //后倾
+		Left,   //左倾
+		Right   //右倾
 	};
 
+public:
+	SPDOnceData(){};
+	SPDOnceData(QDate date, Detection_Result result) :
+		date(date), result(result) {}
+	~SPDOnceData() = default;
+
+public:
+	QDate date;		//日期
+	Detection_Result result;//监测结果
+};
+
+
+class SPDData
+{
 public:
 	SPDData();
 	SPDData(QDate date);
 	~SPDData();
 
 public:
-	void addSample(Detection_Result type);
+	void addSample(SPDOnceData::Detection_Result type);
 
 public:
     QDate   date;       //时间

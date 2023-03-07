@@ -55,14 +55,14 @@
     <ClInclude Include="CommonData.h">
       <Filter>Data</Filter>
     </ClInclude>
-    <ClInclude Include="SPDData.h">
-      <Filter>Data</Filter>
-    </ClInclude>
     <ClInclude Include="JsonServer.h">
       <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="MysqlServer.h">
       <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SPDData.h">
+      <Filter>Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

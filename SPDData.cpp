@@ -18,26 +18,26 @@ SPDData::~SPDData()
 
 
 
-void SPDData::addSample(Detection_Result type)
+void SPDData::addSample(SPDOnceData::Detection_Result type)
 {
 	switch (type)
 	{
-	case SPDData::Normal:
+	case SPDOnceData::Normal:
 		normal++;
 		break;
-	case SPDData::Head:
+	case SPDOnceData::Head:
 		head++;
 		break;
-	case SPDData::Front:
+	case SPDOnceData::Front:
 		front++;
 		break;
-	case SPDData::Back:
+	case SPDOnceData::Back:
 		back++;
 		break;
-	case SPDData::Left:
+	case SPDOnceData::Left:
 		left++;
 		break;
-	case SPDData::Right:
+	case SPDOnceData::Right:
 		right++;
 		break;
 	default:

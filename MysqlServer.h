@@ -16,7 +16,7 @@ public:
 
 public:
 	static void readConfiguration();
-	static SPDData getDetectionData(QSqlQuery& sqlQuery);
+	static SPDData getSPDData(QSqlQuery& sqlQuery);
 
 private:
 	/*数据库配置信息*/

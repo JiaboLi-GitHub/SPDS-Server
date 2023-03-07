@@ -78,7 +78,7 @@ Description: 将数据库查询到的数据封装成DetectionData类型
 	  Input: 数据库查询结果
 	 Return: DetectionData实例
 *************************************************/
-SPDData MysqlServer::getDetectionData(QSqlQuery& sqlQuery)
+SPDData MysqlServer::getSPDData(QSqlQuery& sqlQuery)
 {
 	SPDData data;
 	data.date = QDate::fromString(sqlQuery.value("accuracy").toString());
