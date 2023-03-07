@@ -32,6 +32,7 @@ private:
     void logIn(QByteArray& byteArray);
     void detectionSave(QByteArray& byteArray);
     void detectionRead();
+    void userQuit();
     QString tokenBuilder(QString mailAddress);
 
 protected:

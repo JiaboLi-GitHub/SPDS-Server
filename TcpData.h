@@ -14,7 +14,9 @@ public:
 		Enroll_Request,			//注册
 		LogIn_Request,			//登录
 		Detection_Save_Request,	//保存样本
-		Detection_Read_Request	//读取样本
+		Detection_Read_Request,	//读取样本
+		Auto_Login_Request,		//自动登录请求
+		Quit_Request			//注销登录
 	};
 	
 	//响应类型
@@ -22,7 +24,8 @@ public:
 	{
 		Enroll_Response,		//注册
 		LogIn_Response,			//登录
-		Detection_Read_Response	//读取样本响应
+		Detection_Read_Response,//读取样本响应
+		Auto_Login_Response		//自动登录响应
 	};
 };
 
@@ -39,7 +42,7 @@ public:
 		Enroll_Correct,		//注册成功
 		Code_Error,			//验证码错误
 		Exist_Error,		//账号已注册
-		Enroll_error		//未知错误
+		Enroll_Error		//未知错误
 	};
 	QString userName;
 	QString mailAddress;
