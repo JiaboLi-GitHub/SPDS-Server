@@ -27,14 +27,16 @@ TcpData::RequestType JsonServer::getRequestType(QByteArray& byteArray)
 	return type;
 }
 
-QString JsonServer::getMailAddress(QByteArray& byteArray)
+CodeData JsonServer::toCodeData(QByteArray& byteArray)
 {
 	QJsonDocument document = QJsonDocument::fromBinaryData(byteArray);
 	QJsonObject request_json = document.object();
 	QJsonObject data_json = request_json["data"].toObject();
-	return data_json["mailAddress"].toString();
-}
 
+	CodeData codeData;
+	codeData.mailAddress = data_json["mailAddress"].toString();
+	return codeData;
+}
 
 EnrollData JsonServer::toEnrollData(QByteArray& byteArray)
 {
@@ -76,30 +78,30 @@ SPDOnceData JsonServer::toSPDOnceData(QByteArray& byteArray)
 
 QByteArray JsonServer::toQByteArray(EnrollData data)
 {
-	QJsonObject ResponseData_json,data_json;
+	QJsonObject reqData_json,data_json;
 	data_json.insert("Enroll_Response", data.enroll_response);
-	ResponseData_json.insert("ResponseType", TcpData::Enroll_Response);
-	ResponseData_json.insert("data", data_json);
-	QJsonDocument document = QJsonDocument::QJsonDocument(ResponseData_json);
+	reqData_json.insert("ResponseType", TcpData::Enroll_Response);
+	reqData_json.insert("data", data_json);
+	QJsonDocument document = QJsonDocument::QJsonDocument(reqData_json);
 	return document.toBinaryData();
 }
 
 QByteArray JsonServer::toQByteArray(LoginData data)
 {
-	QJsonObject ResponseData_json, data_json;
+	QJsonObject reqData_json, data_json;
 	data_json.insert("Login_Response", data.login_response);
 	data_json.insert("userName", data.userName);
 	data_json.insert("mailAddress", data.mailAddress);
 	data_json.insert("token", data.token);
-	ResponseData_json.insert("ResponseType", TcpData::LogIn_Request);
-	ResponseData_json.insert("data", data_json);
-	QJsonDocument document = QJsonDocument::QJsonDocument(ResponseData_json);
+	reqData_json.insert("ResponseType", TcpData::LogIn_Request);
+	reqData_json.insert("data", data_json);
+	QJsonDocument document = QJsonDocument::QJsonDocument(reqData_json);
 	return document.toBinaryData();
 }
 
 QByteArray JsonServer::toQByteArray(QVector<SPDData> dataList)
 {
-	QJsonObject ResponseData_json;
+	QJsonObject reqData_json;
 	QJsonArray dataList_json;
 	for (auto& data : dataList)
 	{
@@ -115,9 +117,20 @@ QByteArray JsonServer::toQByteArray(QVector<SPDData> dataList)
 		data_json.insert("right", data.right);
 		dataList_json.append(data_json);
 	}
-	ResponseData_json.insert("ResponseType", TcpData::Detection_Read_Response);
-	ResponseData_json.insert("data", dataList_json);
-	QJsonDocument document = QJsonDocument::QJsonDocument(ResponseData_json);
+	reqData_json.insert("ResponseType", TcpData::Detection_Read_Response);
+	reqData_json.insert("data", dataList_json);
+	QJsonDocument document = QJsonDocument::QJsonDocument(reqData_json);
+	return document.toBinaryData();
+}
+
+QByteArray JsonServer::toQByteArray(QuitData data)
+{
+	QJsonObject reqData_json;
+	QJsonArray dataList_json;
+
+	reqData_json.insert("ResponseType", TcpData::Quit_Request);
+	reqData_json.insert("data", dataList_json);
+	QJsonDocument document = QJsonDocument::QJsonDocument(reqData_json);
 	return document.toBinaryData();
 }
 

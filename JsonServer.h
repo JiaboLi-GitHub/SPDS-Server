@@ -9,8 +9,9 @@ class JsonServer
 {
 public:
 	static TcpData::RequestType getRequestType(QByteArray &byteArray);
-	static QString getMailAddress(QByteArray& byteArray);
 
+
+	static CodeData toCodeData(QByteArray& byteArray);
 	static EnrollData toEnrollData(QByteArray& byteArray);
 	static LoginData toLogInData(QByteArray& byteArray);
 	static SPDOnceData toSPDOnceData(QByteArray& byteArray);
@@ -18,5 +19,6 @@ public:
 	static QByteArray toQByteArray(EnrollData data);
 	static QByteArray toQByteArray(LoginData data);
 	static QByteArray toQByteArray(QVector<SPDData> dataList);
+	static QByteArray toQByteArray(QuitData data);
 };
 

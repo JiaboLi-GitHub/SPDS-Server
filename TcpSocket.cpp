@@ -77,7 +77,7 @@ Description: 处理客户端发起的获取验证码请求
 void TcpSocket::verificationCode(QByteArray &byteArray)
 {
 	//获取邮箱号
-	QString mailAddress_tmp = JsonServer::getMailAddress(byteArray);
+	CodeData codeData = JsonServer::toCodeData(byteArray);
 
 	Email email;
 	if (email.connect())
@@ -85,9 +85,9 @@ void TcpSocket::verificationCode(QByteArray &byteArray)
 		code_DateTme = QDateTime::currentDateTime();
 		int number = QRandomGenerator::global()->bounded(1000, 9999);
 		QString code_tmp = QString::number(number);
-		if (email.sendMail(mailAddress_tmp, code_tmp))
+		if (email.sendMail(codeData.mailAddress, code_tmp))
 		{
-			this->mailAddress = mailAddress_tmp;
+			this->mailAddress = codeData.mailAddress;
 			this->code = code_tmp;
 		}
 	}

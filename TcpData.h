@@ -29,6 +29,16 @@ public:
 	};
 };
 
+class CodeData
+{
+public:
+	CodeData() {};
+	~CodeData() {};
+
+public:
+	QString mailAddress;
+};
+
 class EnrollData
 {
 public:
@@ -71,4 +81,11 @@ public:
 	QString password;
 	QString token;
 	int login_response;
+};
+
+class QuitData
+{
+public:
+	QuitData() {};
+	~QuitData() {};
 };
