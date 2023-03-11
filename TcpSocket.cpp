@@ -31,6 +31,7 @@ TcpSocket::TcpSocket(qintptr id)
 
 TcpSocket::~TcpSocket()
 {
+	CommonData::existMap[mailAddress] = false;
 	delete mysqlServer;
 	qDebug() << u8"ÊÍ·Å::Ïß³Ì£º" << QThread::currentThreadId();
 }
@@ -53,6 +54,9 @@ void TcpSocket::read()
 		break;
 	case TcpData::Detection_Save_Request:
 		detectionSave(byteArray);
+		break;
+	case TcpData::Detection_Read_Request:
+		detectionRead();
 		break;
 	case TcpData::Quit_Request:
 		userQuit();
@@ -139,8 +143,6 @@ void TcpSocket::enroll(QByteArray& byteArray)
 		sqlStr = "insert into user values ('[mailAddress]',	\
 							 			  '[userName]',		\
 						  				  '[password]',		\
-										  '[dateTime]',		\
-										  '[endDateTime]',	\
 										  '[ip]',			\
 										  '[token]')";
 
@@ -150,6 +152,7 @@ void TcpSocket::enroll(QByteArray& byteArray)
 		sqlStr.replace("[enrollDate]",	QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
 		sqlStr.replace("[ip]",			this->ipv4_str);
 		sqlStr.replace("[token]",		tokenBuilder(enrollData.mailAddress));
+		qDebug() << sqlStr;
 		sqlQuery= mysqlServer->run(sqlStr);
 	}
 	enrollData.enroll_response = EnrollData::Enroll_Correct;
@@ -229,6 +232,7 @@ void TcpSocket::logIn(QByteArray& byteArray)
 	QString token = tokenBuilder(mailAddress);
 	logInData.token = token;
 	logInData.login_response = LoginData::Login_Correct;
+	logInData.userName = userName;
 	QByteArray resByteArray = JsonServer::toQByteArray(logInData);
 	write(resByteArray);
 
