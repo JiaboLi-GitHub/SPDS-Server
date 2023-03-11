@@ -47,7 +47,7 @@ private:
     QString userName;       //用户名
     QString mailAddress;    //邮箱号
     QString password;       //密码
-    QString code;           //验证码
+    int code;           //验证码
     QDateTime code_DateTme; //验证码生成时间
 
 /*数据库*/

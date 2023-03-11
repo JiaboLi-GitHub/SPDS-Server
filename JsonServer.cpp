@@ -48,7 +48,7 @@ EnrollData JsonServer::toEnrollData(QByteArray& byteArray)
 	enrollData.userName = data_json["userName"].toString();
 	enrollData.mailAddress = data_json["mailAddress"].toString();
 	enrollData.password = data_json["password"].toString();
-	enrollData.code = data_json["userName"].toInt();
+	enrollData.code = data_json["code"].toInt();
 	return enrollData;
 }
 

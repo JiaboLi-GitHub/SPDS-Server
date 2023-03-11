@@ -88,7 +88,7 @@ void TcpSocket::verificationCode(QByteArray &byteArray)
 		if (email.sendMail(codeData.mailAddress, code_tmp))
 		{
 			this->mailAddress = codeData.mailAddress;
-			this->code = code_tmp;
+			this->code = number;
 		}
 	}
 
@@ -105,14 +105,15 @@ void TcpSocket::enroll(QByteArray& byteArray)
 	EnrollData enrollData = JsonServer::toEnrollData(byteArray);
 
 	//对比验证码
-	if (enrollData.code != code && QDateTime::currentDateTime()<=code_DateTme.addSecs(300))
+	if (enrollData.code != code || QDateTime::currentDateTime()>code_DateTme.addSecs(300))
 	{
+		qDebug() << code_DateTme.toString();
 		enrollData.enroll_response = EnrollData::Code_Error;
 		QByteArray resByteArray = JsonServer::toQByteArray(enrollData);
 		write(byteArray);
 		return;
 	}
-	code.clear();
+	code=0;
 
 	//锁住SQL中user表
 	QMutexLocker locker(&CommonData::sqlUser_Mutex);
@@ -336,6 +337,7 @@ void TcpSocket::detectionRead()
 	write(resByteArray);
 }
 
+
 /*************************************************
 Description: 根据邮箱号生成token字符串
 	  Input: mailAddress=邮箱号
@@ -359,5 +361,5 @@ void TcpSocket::userQuit()
 	userName.clear();
 	mailAddress.clear();
 	password.clear();
-	code.clear();
+	code=0;
 }
