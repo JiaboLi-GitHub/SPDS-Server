@@ -14,8 +14,8 @@ public:
     bool sendMail(QString toMailAddress, QString code);
 
 private:
-    QString mailAddress  = "1955474265@qq.com";
-    QString mailpassword = "joskdngricgccfbe";
+    QString mailAddress  = "";
+    QString mailpassword = "";
 
 private:
     SmtpClient* smtp=NULL;
