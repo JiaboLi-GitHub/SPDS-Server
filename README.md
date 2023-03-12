@@ -27,3 +27,9 @@
 3. 通过ODBC连接MySQL数据库，执行增删改查操作。
 4. 使用SMTP组件发送验证码邮件。
 
+## 展示
+
+  <img src="https://i.328888.xyz/2023/03/12/vVVNF.png" width="60%">  
+
+  <img src="https://i.328888.xyz/2023/03/12/vVDeC.md.png" width="60%">
+
