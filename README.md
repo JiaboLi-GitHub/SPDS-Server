@@ -14,6 +14,16 @@
 
 - [Qt](https://www.qt.io/zh-cn/)
 
+- [MySQL](https://www.mysql.com/)
+
 - [SMTP Client for Qt (C++)](https://github.com/bluetiger9/SmtpClient-for-Qt)
 
   
+
+## 实现功能
+
+1. 使用Qt提供的QTcpServer类和QTcpSocket类进行套接字通讯。
+2. 使用Qt提供的QThread类实现多线程，为多个客户端提供服务。
+3. 通过ODBC连接MySQL数据库，执行增删改查操作。
+4. 使用SMTP组件发送验证码邮件。
+
