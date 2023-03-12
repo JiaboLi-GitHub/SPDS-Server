@@ -8,3 +8,12 @@
 
 客户端：https://github.com/JiaboLi-GitHub/SPDS-Client
 
+## 项目开放所用技术
+
+- C++
+
+- [Qt](https://www.qt.io/zh-cn/)
+
+- [SMTP Client for Qt (C++)](https://github.com/bluetiger9/SmtpClient-for-Qt)
+
+  
