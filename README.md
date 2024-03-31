@@ -29,7 +29,7 @@
 ## 展示：
 
 ![SPDS主页面](GitHub/Img/SPDS主页面.png)
-
-<img src="GitHub/Img/SPDS主页面.png" />
+https://github.com/JiaboLi-GitHub/SPDS-Server/blob/master/GitHub/Img/SPDS%E4%B8%BB%E9%A1%B5%E9%9D%A2.png
+<img src="https://github.com/JiaboLi-GitHub/SPDS-Server/blob/master/GitHub/Img/SPDS%E4%B8%BB%E9%A1%B5%E9%9D%A2.png"/>
 
 
